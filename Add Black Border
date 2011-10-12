@@ -16,6 +16,8 @@
 # To Install, simply copy it into your ~/.gnome2/nautilus-scripts/ directory as follows:
 # $> mkdir ~/.gnome2/nautilus-scripts/ImageScripts/
 # $> cp 'Add Black Border' ~/.gnome2/nautilus-scripts/ImageScripts
+# $> cd ~/.gnome2/nautilus-scripts/ImageScripts
+# $> chmod +x 'Add Black Border'
 #
 # Thats it. Restart nautilus and right click on any file. You should see 
 # "Scripts -> ImageScripts -> Add Black Border"
