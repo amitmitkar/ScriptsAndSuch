@@ -1,5 +1,11 @@
 #!/bin/bash
 #
+# Author : Amit Mitkar
+#
+# Get the latest version of this script @ 
+#
+#         https://github.com/amitmitkar/ScriptsAndSuch/blob/master/Add%20Black%20Border
+#
 # This is a simple script which can be trigerred from Nautilus ( Gnome's File Browser )
 # as a right click menu option.
 #
