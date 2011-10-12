@@ -49,7 +49,7 @@ trap "exit_func" HUP
 while [ $# -gt 0 ]
 do
 	fil=$1
-	convert -bordercolor \#000000 -border 3% "$fil" ${fil}.${pid} 1>&2 2>> /tmp/mogrifye$pid
+	convert -bordercolor \#000000 -border 3% "$fil" ${fil}.${pid} 1>&2 2> /tmp/mogrifye$pid
 	if [ $? -ne 0 ]
 	then
 		echo "Failed file \"$fil\":" 1>>  /tmp/bordererrs.$pid
