@@ -1,0 +1,123 @@
+# goto command that goes in my bashrc.
+# Analogous to pushd / popd in that it can remember previously visited
+# directories.
+#
+# Examples : 
+#
+# [amitkar@lohgad ~/code/opensolaris]$ goto -h
+# Usage : goto link_name
+#         goto -s link_name dir_name
+#         goto -d link_name
+#         goto -l
+#  Jumps to specified link_name
+#  -l list all the links that've been setup
+#  -s setup link_name to point to dir_name
+#  -d delete link_name from the set of links
+#  -h print usage information
+#
+# [amitkar@lohgad ~/code/opensolaris]$ pwd
+# /home/amitkar/code/opensolaris
+#
+# [amitkar@lohgad ~/code/opensolaris]$ goto -s osol `pwd`
+#
+# [amitkar@lohgad ~/code/opensolaris]$ goto -l
+# osol => /home/amitkar/code/opensolaris
+#
+# [amitkar@lohgad ~/code/opensolaris]$ cd /tmp
+#
+# [amitkar@lohgad /tmp]$ goto osol
+# [amitkar@lohgad ~/code/opensolaris]$ pwd
+# /home/amitkar/code/opensolaris 
+
+
+goto_usage()
+{
+   echo "Usage : goto link_name"
+   echo "        goto -s link_name dir_name"
+   echo "        goto -d link_name"
+   echo "        goto -l"
+   echo " Jumps to specified link_name"
+   echo " -l list all the links that've been setup"
+   echo " -s setup link_name to point to dir_name"
+   echo " -d delete link_name from the set of links" 
+   echo " -h print usage information"
+}
+
+goto() {
+   if [ ! -d ~/.goto_dir ]
+   then
+        mkdir ~/.goto_dir
+   fi
+
+   case $1 in
+
+    "-h")
+        goto_usage
+        ;;
+    "-s")
+        if [ $# -lt 3 ]
+        then
+            goto_usage
+        else
+            link_name=$2
+            link_dir=$3
+            if [ -L  ~/.goto_dir/${link_name} ]
+            then
+               read -p "Found ${link_name} linked to `readlink ~/.goto_dir/${link_name}`. Overwrite? (Y/N): "
+               if [[ $REPLY =~ ^[Yy]$ ]] 
+               then
+                    rm ~/.goto_dir/${link_name}
+                    ln -s $link_dir ~/.goto_dir/$link_name
+               fi
+            else
+               ln -s $link_dir ~/.goto_dir/$link_name
+            fi
+        fi
+    ;;
+    "-d")
+        if [ $# -lt 2 ]
+        then
+            goto_usage
+        else
+            link_name=$2
+            rm ~/.goto_dir/$link_name
+        fi
+    ;;
+    "-l")
+            if [ "$2" = "" ]
+            then
+                pat="*"
+            else
+                pat=$2
+                if [ ! -L ~/.goto_dir/$2 ]
+                then
+                    echo "No such link : $2" 
+                    return
+                fi
+            fi
+            for link in `ls -d ~/.goto_dir/${pat} 2> /dev/null`
+            do
+                echo "`basename $link` => `readlink $link`"
+            done
+    ;;
+    "")
+            goto_usage
+    ;;
+    *)
+        if [ ! -L  ~/.goto_dir/$1 ]
+        then
+           echo "No such link : $1" 
+        else
+            cd `readlink ~/.goto_dir/$1`
+        fi
+    ;;
+   esac
+}
+
+goto_complete() {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    opts=$( cd ~/.goto_dir; ls -d * )
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+}
+
+complete -F goto_complete goto
