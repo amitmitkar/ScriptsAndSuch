@@ -8,6 +8,7 @@
 # If no existing window matches the ClassName it launches the command provided and performs
 # the search again with the provided ClassName.
 # If id is provided the window with id == wndid is selected if it matches the ClassName.
+# To get the classname of a window you can use xprop and grep the o/p for WM_CLASS.
 
 set -vx
 
