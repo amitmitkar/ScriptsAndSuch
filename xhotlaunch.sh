@@ -9,6 +9,8 @@
 # the search again with the provided ClassName.
 # If id is provided the window with id == wndid is selected if it matches the ClassName.
 
+set -vx
+
 get_window_class()
 {
 	local cname
@@ -56,7 +58,7 @@ activate_window()
 	if [ "${wcname}" == "${cname}" ]
 	then
 		xdotool windowactivate ${wnd}
-		echo -n ${wnd} > /tmp/xhotlaunch.wnd
+		echo -n ${wnd} > /tmp/xhotlaunch.wnd.${cname}
 		return 0
 	fi
 	Log "Discovered class ${wcname} doesn't match expected class ${cname}"
@@ -80,9 +82,9 @@ shift 1
 
 if [ "$wnd" = "" ]
 then
-	if [ -f /tmp/xhotlaunch.wnd ]
+	if [ -f /tmp/xhotlaunch.wnd.${cname} ]
 	then
-		wnd=`cat /tmp/xhotlaunch.wnd`
+		wnd=`cat /tmp/xhotlaunch.wnd.${cname}`
 	else
 		wnd=`get_first_window_of_class ${cname}`
 	fi
